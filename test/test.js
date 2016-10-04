@@ -6,4 +6,6 @@ var irecarga = require('../')({
 irecarga.validateLoginSenha(function(err, data){
     console.log('err: ', err)
     console.log('data', data)
+    console.log('token', irecarga.token)
 })
+
