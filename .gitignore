@@ -3,7 +3,3 @@
 
 # Node
 node_modules/
-
-# Other files
-test.js
-invalid_token.txt
