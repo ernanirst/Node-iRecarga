@@ -1,6 +1,8 @@
 const base_uri = 'https://www.irecarga.com.br/api/'
 const validateLoginPassword = base_uri + 'ValidateUser.ashx?action=validateLoginSenha'
 const reloaderCompanyService = base_uri + 'ReloadCompany.ashx?action=reloaderCompanyService'
+const reloaderCompanyValue = base_uri + 'Company.ashx?action=reloaderValueCompany'
+const reloaderPhoneValue = base_uri + 'ReloadPhone.ashx?action=reloadPhoneValue'
 
 const post_handler = require('./post_handler')
 
@@ -65,6 +67,82 @@ var _this = module.exports = function(credentials) {
                 )
             }
             
+        },
+        /**
+         * returns a list of value availables for
+         * recharge for a pair of DDD and provider
+         * */
+        getValuesforProvider: function(provider, ddd, callback) {
+            // check if has token before proceed
+            if(methods.token == undefined || methods.token == null){
+                // get token
+                methods.validateLoginSenha(function(err, data){
+                    post_handler.getJSONHttpPost(reloaderCompanyValue, 
+                        {NN_TOKEN: methods.token, NN_COMPANY: provider, NN_DDD: ddd},
+                        callback
+                    )
+                })
+            }else{
+                // has token
+                post_handler.getJSONHttpPost(reloaderCompanyValue, 
+                    {NN_TOKEN: methods.token, NN_COMPANY: provider, NN_DDD: ddd},
+                    function(err, data){
+                        // it doesn't return status if there is no error
+                        if(data.hasOwnProperty('status')){
+                            // get token and post again
+                            methods.validateLoginSenha(function(err, data){
+                                post_handler.getJSONHttpPost(reloaderCompanyValue, 
+                                    {NN_TOKEN: methods.token, NN_COMPANY: provider, NN_DDD: ddd},
+                                    callback
+                                )
+                            })
+                        }else{
+                            callback(err, data)
+                        }
+                    }
+                )
+            }
+        },
+        /**
+         * make the recharge 
+         * */
+        makeRecharge: function(provider, ddd, number, value, user, callback) {
+            // check if has token before proceed
+            if(methods.token == undefined || methods.token == null){
+                // get token
+                console.log('no token')
+                methods.validateLoginSenha(function(err, data){
+                    post_handler.getJSONHttpPost(reloaderPhoneValue, 
+                        {NN_TOKEN: methods.token, NN_COMPANY: provider, NN_DDD: ddd, NN_PHONENUMBER: number,
+                            NN_VALUE: value, NN_OS: user},
+                        callback
+                    )
+                })
+            }else{
+                console.log('has token')
+                // has token
+                post_handler.getJSONHttpPost(reloaderPhoneValue, 
+                    {NN_TOKEN: methods.token, NN_COMPANY: provider, NN_DDD: ddd, NN_PHONENUMBER: number,
+                            NN_VALUE: value, NN_OS: user},
+                    function(err, data){
+                        // it doesn't return status if there is no error
+                        if(data.hasOwnProperty('status')){
+                            console.log('old/invalid token')
+                            // get token and post again
+                            methods.validateLoginSenha(function(err, data){
+                                post_handler.getJSONHttpPost(reloaderPhoneValue, 
+                                    {NN_TOKEN: methods.token, NN_COMPANY: provider, NN_DDD: ddd, NN_PHONENUMBER: number,
+                                        NN_VALUE: value, NN_OS: user},
+                                    callback
+                                )
+                            })
+                        }else{
+                            console.log('success')
+                            callback(err, data)
+                        }
+                    }
+                )
+            }
         },
     }
 
