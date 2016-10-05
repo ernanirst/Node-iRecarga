@@ -6,8 +6,7 @@ var Error = function (status, description){
 }
 
 exports.getJSONHttpPost = function (url, params, callback){
-    //var request = require('request');
-    
+
     request({
         url: url,
         method: 'POST',
