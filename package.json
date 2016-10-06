@@ -8,6 +8,10 @@
   },
   "author": "ernanirst@gmail.com",
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ernanirst/Node-iRecarga.git"
+  },
   "dependencies": {
     "request": "^2.75.0",
     "querystring": "^0.2.0"
