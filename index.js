@@ -126,7 +126,7 @@ var _this = module.exports = function(credentials) {
                             NN_VALUE: value, NN_OS: user},
                     function(err, data){
                         // it doesn't return status if there is no error
-                        if(data.hasOwnProperty('status')){
+                            if(data.status=="false"){
                             console.log('old/invalid token')
                             // get token and post again
                             methods.validateLoginSenha(function(err, data){
